@@ -3,28 +3,29 @@ import { View, Text, TextInput, Button, FlatList } from 'react-native';
 import { Carro } from '../../src/types/carro';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { carrosService } from '@/src/api/carros.service';
+import { useCarros, useAgregarCarro } from '../../src/hooks/useCarros'
 
 // URL base de la API, tomada de la variable de entorno de Expo
 const URL = `${process.env.EXPO_PUBLIC_API_URL}/carros`
 
+// Componente Principal de la APP
+// Maneje el input de la marca con el estado local
+// Obtener la lista de carros usando el hook useCarros
+// Define la función para agregar carros que usa el hook useAgregarCarro
+
 export default function App() {
-  // Estado para almacenar la lista de carros obtenida del mockup api
-  const [carros, setCarros] = useState<Carro[]>([])
-  // Estado para manejar el texto ingresado en el input (Marca del carro)
+  // Estado local para controla el valor del input de la marca
   const [marca, setMarca] = useState('')
+  // Hook useCarros: obtiene la lista de carros desde la API
+  const {data:carros} = useCarros()
+  // Hook useAgregarCarro: prepara la mutación para agregar un carro
+  const agregarMutation = useAgregarCarro()
 
-  // GET: Consume carrosService para obtener la lista de carros
-  useEffect(() => {
-    console.log('GET: Solicitando carros a la red (AXIOS)')
-    carrosService.getAll().then(setCarros)
-  }, [])
-
-  // POST: Consume carrosService para agregar un nuevo carro
-  const agregar = async () => {
-    console.log('POST: Enviando nuevo carro a la red (AXIOS)')
-    const nuevo = await carrosService.add(marca)
-    setCarros(prev => [...prev, nuevo])
-    setMarca('')
+  // Función agregar: Ejecuta la mutación con la marca actual
+  // Al terminar exitosamente, limpia el input
+  
+  const agregar = () => {
+    agregarMutation.mutate(marca, {onSuccess: () => setMarca('')})
   }
 
   return (
