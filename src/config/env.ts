@@ -2,13 +2,13 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-        'Faltan variables de entorno. Crea el archivo .env con ' +
-        'EXPO_PUBLIC_SUPABASE_URL y EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY'
-    );
+  throw new Error(
+    'Faltan variables de entorno. Crea el archivo .env con ' +
+    'EXPO_PUBLIC_SUPABASE_URL y EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY'
+  );
 }
 
 export const ENV = {
-    supabaseUrl,
-    supabaseAnonKey,
+  supabaseUrl,
+  supabaseAnonKey,
 } as const;

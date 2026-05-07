@@ -1,21 +1,53 @@
-// Importar Stack desde expo-router que define la navegación
-// Importar el QueryClient y QueryClientProvider desde TanStack
-// Con esto podemos configurar y proveer el cliente de querys y hooks dentro de toda la app
-
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
+import { AuthProvider, useAuth } from "@/src/features/auth/ui/AuthContext";
 
-// Creamos una instancia de QueryClient, y un objeto que administre la caché y el ciclo de vida de las querys/mutation
+const qc = new QueryClient();
 
-const qc = new QueryClient()
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth();
+  const router = useRouter();
+  const segments = useSegments();
 
-// Componente Layout, envolver la navegación (Stack) dentro del Provider
-// Con esto, todos los componentes hijos pueden usar useQuery y useMutation, es el punto de integración entre TanStack y la navegación con EXPO
+  useEffect(() => {
+    if (loading) return;
+
+    const onLoginScreen = segments[0] === "login";
+
+    if (!session && !onLoginScreen) {
+      router.replace("/login");
+    }
+  }, [session, loading, segments]);
+
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  return <>{children}</>;
+}
 
 export default function Layout() {
-  return(
-    <QueryClientProvider client = {qc}>
-      <Stack/>
+  return (
+    <QueryClientProvider client={qc}>
+      <AuthProvider>
+        <AuthGate>
+          <Stack />
+        </AuthGate>
+      </AuthProvider>
     </QueryClientProvider>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
