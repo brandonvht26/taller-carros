@@ -4,6 +4,7 @@ import { Carro } from '../../src/types/carro';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { carrosService } from '@/src/api/carros.service';
 import { useCarros, useAgregarCarro } from '../../src/hooks/useCarros'
+import { useRouter } from 'expo-router';
 
 // URL base de la API, tomada de la variable de entorno de Expo
 const URL = `${process.env.EXPO_PUBLIC_API_URL}/carros`
@@ -14,6 +15,7 @@ const URL = `${process.env.EXPO_PUBLIC_API_URL}/carros`
 // Define la función para agregar carros que usa el hook useAgregarCarro
 
 export default function App() {
+  const router = useRouter()
   // Estado local para controla el valor del input de la marca
   const [marca, setMarca] = useState('')
   // Hook useCarros: obtiene la lista de carros desde la API
@@ -36,6 +38,7 @@ export default function App() {
         style={{ borderWidth: 3 }}
       />
       <Button title="Agregar" onPress={agregar} />
+      <Button title="Ir a Pantalla Genérica" onPress={() => router.push('/generic')} />
       <FlatList 
         // Fuente de Datos
         data = {carros}
